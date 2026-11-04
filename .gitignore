@@ -30,3 +30,11 @@ nosugarfin-upload-*.zip
 /nosugarfin-private/
 /.vscode/
 *.zip
+
+# Published news workflow and its three search agents
+!/.claude/skills/news/
+!/.claude/agents/
+/.claude/agents/*
+!/.claude/agents/news-tax.md
+!/.claude/agents/news-currency.md
+!/.claude/agents/news-general.md
