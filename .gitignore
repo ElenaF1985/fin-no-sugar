@@ -7,7 +7,10 @@ nosugarfin-upload-*.zip
 
 # Local assistant instructions and owner information
 /.agents/
-/.claude/
+/.claude/*
+!/.claude/skills/
+/.claude/skills/*
+!/.claude/skills/fin-no-sugar/
 /AGENTS.md
 /PROJECT.md
 /.codex/
