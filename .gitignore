@@ -1,0 +1,29 @@
+# Не публикуется на GitHub: журналы утренних запусков (в них пути этого компьютера) и отчёт проверки (пересоздаётся)
+logs/
+tests/last-report.txt
+
+# Архивы ручной загрузки содержат копию публичных файлов
+nosugarfin-upload-*.zip
+
+# Local assistant instructions and owner information
+/.agents/
+/.claude/
+/AGENTS.md
+/PROJECT.md
+/.codex/
+/.aws/
+
+# Credentials, local configuration and databases
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.pfx
+*.p12
+*.sqlite
+*.sqlite-*
+*.db
+/nosugarfin-private/
+/.vscode/
+*.zip

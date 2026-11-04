@@ -1,0 +1,1930 @@
+/* Финансы без сахара — строгий светлый стиль, акцент цвета заваренного чая */
+
+:root {
+  --paper: #f6f1e7;
+  --paper-2: #fffdf8;
+  --ink: #1d1a16;
+  --muted: #6f665b;
+  --line: #ddd3c2;
+  --tea: #9a5a22;
+  --tea-soft: #efe2cf;
+  --tea-light: #c8a685; /* посередине между --tea и --paper: полоски шапки, рамки «Юмора» */
+  --tea-dark: #7f4919;  /* чайные кнопки при наведении */
+  --hall: #2a1d14;      /* тёмно-коричневый «зала суда»: фон суда и подсказки меню */
+  --eur: #2f4b5c;       /* линия евро на графике (доллар — --tea) */
+  --placeholder: #a9a39a;
+  --up: #2f6b3f;
+  --down: #a3342b;
+
+  --serif: "Literata", Georgia, serif;
+  --sans: "Manrope", "Segoe UI", sans-serif;
+  --mono: "IBM Plex Mono", Consolas, monospace;
+}
+
+* { box-sizing: border-box; }
+
+html { scroll-behavior: smooth; }
+
+body {
+  margin: 0;
+  overflow-x: clip; /* страховка: ничто не даёт горизонтальной прокрутки страницы на телефоне */
+  background: var(--paper);
+  color: var(--ink);
+  font: 400 16px/1.6 var(--sans);
+}
+
+.wrap {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+/* Шапка */
+.masthead {
+  border-bottom: 3px double var(--ink);
+  padding: 40px 0 0;
+}
+
+.masthead__date {
+  margin: 0;
+  color: var(--muted);
+  font: 500 13px/1 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+/* Двойные полоски над и под названием — как в шапке газеты: две линии по 2 px с просветом 1 px.
+   Отступы подобраны так, чтобы буквы стояли по центру между полосками */
+.masthead__title {
+  margin: 14px 0 0;
+  padding: 2px 0 14px;
+  border-top: 5px double var(--tea-light);
+  border-bottom: 5px double var(--tea-light);
+  font: 700 clamp(40px, 8vw, 72px)/1.2 var(--serif);
+  letter-spacing: -.02em;
+}
+
+.masthead__title em {
+  font-style: italic;
+  font-weight: 500;
+  color: var(--tea);
+}
+
+/* Анимация заголовка: «Финансы» по центру → сдвиг влево → «без сахара» печатается */
+.title-word { display: inline-block; }
+
+.js .title-word { visibility: hidden; }  /* до расчёта позиции, чтобы не мелькало */
+.js .title-word.is-ready { visibility: visible; }
+
+.title-caret {
+  display: none;
+  width: .06em;
+  height: .8em;
+  margin-left: .04em;
+  background: var(--tea);
+  vertical-align: -.05em;
+}
+
+.title-caret.is-on {
+  display: inline-block;
+  animation: caret-blink .9s steps(1) infinite;
+}
+
+.title-caret.is-typing { animation: none; }
+
+.title-caret.is-off {
+  display: inline-block;
+  opacity: 0;
+  transition: opacity .6s;
+}
+
+@keyframes caret-blink {
+  50% { opacity: 0; }
+}
+
+/* Подзаголовок — ровно посередине между двойной полоской над ним и линией меню под ним */
+.masthead__lead {
+  margin: 0;
+  padding: 18px 0 17px; /* снизу на 1 px меньше: так отступы до полосок у самих букв равны */
+  color: var(--muted);
+  font-size: 18px;
+}
+
+.nav {
+  display: flex;
+  flex-wrap: wrap; /* на телефоне пункты переносятся на вторую строку, а не уходят за край */
+  align-items: center;
+  gap: 10px 4px; /* все семь пунктов (в дни сроков) помещаются в одну строку колонки 928 px */
+  border-top: 1px solid var(--line);
+  padding: 12px 0;
+}
+
+/* На широком экране пункты растянуты ровно на всю строку — и в обычные дни, и в дни сроков */
+@media (min-width: 900px) {
+  .nav { justify-content: space-between; }
+}
+.nav a { text-decoration: none; }
+
+/* «Калькулятор» в меню — кнопка (открывает окошко), но выглядит как остальные пункты */
+.nav__btn {
+  background: none;
+  cursor: pointer;
+}
+
+/* Все пункты меню: в чайной рамке, со значком после надписи */
+.nav .nav__accent {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 7px;
+  border: 1.5px solid var(--tea);
+  border-radius: 999px;
+  color: var(--tea);
+  font: 700 14px/1.6 var(--sans); /* все семь пунктов помещаются в одну строку */
+  transition: background .15s, color .15s;
+}
+
+.nav .nav__accent:hover {
+  background: var(--tea);
+  color: #fff;
+}
+
+/* Скрытый пункт (нет сроков, праздника, картинки) — скрыт, несмотря на inline-flex выше */
+.nav .nav__accent[hidden] { display: none; }
+
+/* «Финансовый суд» — главная фишка: как остальные пункты, но на мягкой чайной подложке.
+   При наведении — как у всех (правило выше) */
+.nav .nav__accent--main:not(:hover) { background: var(--tea-soft); }
+
+/* Всплывающая подсказка под пунктом меню (текст — в data-tip): при наведении и при переходе клавишей Tab.
+   Появляется только в этот момент (display), а не прячется прозрачностью: невидимая подсказка у края экрана
+   давала лишнюю прокрутку вбок на планшете */
+.nav [data-tip] { position: relative; }
+
+/* Подсказка выровнена по левому краю пункта: у первого пункта меню она не вылезает за левый край страницы */
+.nav [data-tip]::after,
+.nav [data-tip]::before {
+  display: none;
+  position: absolute;
+  left: 0;
+  pointer-events: none;
+  animation: tip-in .15s ease-out;
+}
+
+.nav [data-tip]::after {
+  content: attr(data-tip);
+  top: calc(100% + 10px);
+  z-index: 20;
+  padding: 6px 12px;
+  border-radius: 6px;
+  background: var(--hall);
+  color: var(--paper);
+  font: 500 13px/1.4 var(--sans);
+  white-space: nowrap;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, .25);
+}
+
+/* Хвостик подсказки — маленький ромб над ней, напротив начала надписи */
+.nav [data-tip]::before {
+  content: '';
+  left: 18px;
+  top: calc(100% + 6px);
+  z-index: 21;
+  width: 8px;
+  height: 8px;
+  background: var(--hall);
+  transform: rotate(45deg);
+}
+
+.nav [data-tip]:hover::after,
+.nav [data-tip]:hover::before,
+.nav [data-tip]:focus-visible::after,
+.nav [data-tip]:focus-visible::before { display: block; }
+
+@keyframes tip-in { from { opacity: 0; } }
+
+/* На планшете и телефоне подсказок нет: наведения там не бывает, а у края экрана они бы не помещались */
+@media (max-width: 899px) {
+  .nav [data-tip]::after,
+  .nav [data-tip]::before { display: none !important; }
+}
+
+.nav__icon {
+  width: 17px;
+  height: 17px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  flex: none;
+}
+
+/* Узкое окно ноутбука (900–1000 px): чуть мельче, чтобы семь пунктов всё равно помещались в строку.
+   Стоит после основных правил меню — иначе они его перебивают */
+@media (min-width: 900px) and (max-width: 1000px) {
+  .nav .nav__accent { padding: 2px 6px; font-size: 13px; }
+  .nav__icon { width: 15px; height: 15px; }
+}
+
+/* Разделы */
+.section { padding: 48px 0 8px; }
+
+/* Между разделами — те же 48 px, что от линии под меню до первого раздела:
+   28 px + 8 px (низ предыдущего раздела) + 12 px (отступ под его последним блоком) */
+.section + .section { padding-top: 28px; }
+
+.section__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 4px 16px;
+  margin-bottom: 20px;
+}
+
+.section__head h2 {
+  margin: 0;
+  font: 700 32px/1.1 var(--serif);
+}
+
+/* Ссылка «↑ К меню» у заголовка раздела */
+.to-top {
+  margin-right: auto; /* прижимается к заголовку, пояснение остаётся справа */
+  color: var(--tea);
+  font-size: 14px;
+  font-weight: 700;
+  text-decoration: none;
+  border-bottom: 2px solid transparent;
+  white-space: nowrap;
+}
+
+.to-top:hover { border-bottom-color: var(--tea); }
+
+.section__note {
+  margin: 0;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Горящие сроки: карточка сегодняшнего дня — дата слева, справа что сделать, полоска красная */
+.deadlines {
+  list-style: none;
+  margin: 0 0 12px;
+  padding: 0;
+  display: grid;
+  gap: 12px;
+}
+
+.deadline {
+  display: grid;
+  grid-template-columns: 88px 1fr;
+  gap: 16px;
+  padding: 14px 16px;
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--tea-light);
+}
+
+.deadline.is-hot { border-left-color: var(--down); }
+
+.deadline__when {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.deadline__day { font: 700 36px/1 var(--serif); }
+
+.deadline__month {
+  margin-top: 4px;
+  color: var(--muted);
+  font: 500 13px/1 var(--mono);
+  letter-spacing: .05em;
+}
+
+.deadline__left {
+  margin: 0 0 6px;
+  color: var(--muted);
+  font: 500 13px/1.2 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+}
+
+.deadline.is-hot .deadline__left { color: var(--down); font-weight: 700; }
+
+.deadline__items {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.deadline__items li + li { margin-top: 6px; }
+
+.deadline__tag {
+  display: inline-block;
+  margin-right: 8px;
+  padding: 0 6px;
+  background: var(--tea-soft);
+  color: var(--tea);
+  font: 500 12px/1.7 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.deadline__note {
+  display: block;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+/* Таблица «Все сроки»: текстовые колонки слева, на узком экране прокручивается внутри */
+.table-scroll { overflow-x: auto; }
+
+/* Двойной класс — чтобы перебить шрифт и выравнивание таблицы курсов, которая описана ниже */
+.rate-table.deadlines-table { font: 400 14px/1.4 var(--sans); }
+
+.rate-table.deadlines-table th,
+.rate-table.deadlines-table td {
+  text-align: left;
+  vertical-align: top;
+}
+
+.rate-table.deadlines-table tbody tr:first-child td { font-weight: 400; }
+
+.rate-table.deadlines-table td { border-bottom: none; }
+.rate-table.deadlines-table tr.is-first td { border-top: 1px solid var(--line); }
+
+.deadlines-table__date {
+  font: 500 14px/1.4 var(--mono);
+  white-space: nowrap;
+}
+
+.deadlines-table__tax {
+  color: var(--tea);
+  font: 500 12px/1.6 var(--mono);
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+.deadlines-table__law {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+/* Плитки курсов */
+.tiles {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  margin-bottom: 12px;
+}
+
+.tile {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  border-top: 4px solid var(--tea);
+  padding: 16px;
+}
+
+.tile p { margin: 0; }
+
+.tile__code {
+  color: var(--muted);
+  font: 500 13px/1 var(--mono);
+  letter-spacing: .1em;
+}
+
+.tile__value {
+  margin-top: 8px !important;
+  font: 500 clamp(24px, 3.2vw, 36px)/1.1 var(--mono);
+}
+
+.tile__delta {
+  margin-top: 4px !important;
+  font: 500 14px/1.2 var(--mono);
+  color: var(--muted);
+}
+
+.tile__delta.is-up { color: var(--up); }
+.tile__delta.is-down { color: var(--down); }
+
+/* Верхняя строка плитки: название слева, дата справа */
+.tile__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px 8px;
+}
+
+/* Дата текущего курса: размер как у поля даты, но без рамки — её нельзя менять */
+.tile__day {
+  font: 500 14px/1 var(--sans);
+  padding: 5px 0;
+  color: var(--ink);
+}
+
+/* Третья плитка — курс на выбранную дату: только USD и EUR, без изменений */
+.tile__date {
+  font: 500 14px/1 var(--sans);
+  padding: 4px 6px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.tile__pair { margin-top: 8px; }
+
+.tile__pair p {
+  display: flex;
+  align-items: baseline;
+  gap: 8px;
+  font: 500 clamp(18px, 2vw, 22px)/1.35 var(--mono);
+}
+
+.tile__pair span {
+  color: var(--muted);
+  font-size: 13px;
+  letter-spacing: .1em;
+}
+
+.tile__pair .tile__wait {
+  font: 400 13px/1.4 var(--sans);
+  color: var(--muted);
+}
+
+/* Панели */
+.panel {
+  background: var(--paper-2);
+  border: 1px solid var(--line);
+  padding: 20px;
+  margin-bottom: 12px;
+}
+
+.panel__title {
+  margin: 0 0 16px;
+  font: 700 18px/1.3 var(--serif);
+}
+
+.panel__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 16px;
+  margin-bottom: 16px;
+}
+
+.panel__head .panel__title { margin: 0; }
+
+/* Переключатель периода 7 / 14 дней / Период */
+.period { display: flex; }
+
+.period button {
+  font: 500 14px/1 var(--sans);
+  padding: 8px 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+  cursor: pointer;
+}
+
+.period button + button { border-left: none; }
+
+.period button:hover { background: var(--tea-soft); }
+
+.period button[aria-pressed="true"] {
+  background: var(--tea);
+  border-color: var(--tea);
+  color: #fff;
+  font-weight: 700;
+}
+
+.panel__hint {
+  margin: 12px 0 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.rates-error,
+.news-stale {
+  margin: 0 0 12px;
+  padding: 12px 16px;
+  border-left: 4px solid var(--down);
+  background: #f8e6e3;
+  color: var(--down);
+}
+
+/* Сворачиваемая панель (плюсик / минус) */
+.fold__head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 0;
+  cursor: pointer;
+  list-style: none;
+  user-select: none;
+}
+
+.fold__head::-webkit-details-marker { display: none; }
+
+.fold__head::after {
+  content: "+";
+  width: 28px;
+  height: 28px;
+  display: grid;
+  place-items: center;
+  border: 1px solid var(--line);
+  color: var(--tea);
+  font: 500 20px/1 var(--mono);
+  transition: background .2s;
+}
+
+.fold__head:hover::after { background: var(--tea-soft); }
+
+.fold[open] .fold__head { margin-bottom: 16px; }
+.fold[open] .fold__head::after { content: "−"; }
+
+/* График */
+.chart-box {
+  position: relative;
+  height: 280px;
+}
+
+/* Таблица курсов */
+.rate-table {
+  width: 100%;
+  border-collapse: collapse;
+  font: 500 15px/1.4 var(--mono);
+}
+
+.rate-table th {
+  text-align: right;
+  padding: 8px 12px;
+  border-bottom: 2px solid var(--ink);
+  font: 700 13px/1.4 var(--sans);
+  color: var(--muted);
+}
+
+.rate-table td {
+  text-align: right;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--line);
+}
+
+.rate-table th:first-child,
+.rate-table td:first-child { text-align: left; }
+
+.rate-table tbody tr:first-child td { font-weight: 700; }
+
+.rate-table__wait {
+  text-align: center !important;
+  color: var(--muted);
+}
+
+/* Дни, когда ЦБ курс не устанавливал — действует последний установленный */
+.rate-table tr.is-carried td { color: var(--muted); }
+
+/* Выбор периода «с … по …» */
+.date-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-bottom: 16px;
+}
+
+.date-form[hidden] { display: none; }
+
+.date-form__note {
+  flex-basis: 100%;
+  margin: 0;
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.date-form label { font-weight: 700; }
+
+.date-form input,
+.date-form button {
+  font: 500 15px/1 var(--sans);
+  padding: 10px 12px;
+  border: 1px solid var(--line);
+  background: var(--paper);
+  color: var(--ink);
+}
+
+.date-form button {
+  background: var(--tea);
+  border-color: var(--tea);
+  color: #fff;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+.date-form button:hover { background: var(--tea-dark); }
+
+.date-form button:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+/* Кнопка «Выгрузить в CSV» в заголовке «Курс по дням» — слева от плюса */
+.export-btn {
+  margin-left: auto;
+  margin-right: 12px;
+  font: 700 14px/1 var(--sans);
+  padding: 8px 12px;
+  border: 1px solid var(--tea);
+  background: var(--tea);
+  color: #fff;
+  cursor: pointer;
+}
+
+.export-btn:hover { background: var(--tea-dark); }
+
+.export-btn:disabled {
+  opacity: .5;
+  cursor: default;
+}
+
+/* Раздел «Юмор»: до двух картинок из pictures/humor/ рядом, на телефоне — одна под другой */
+.humor-pics {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px;
+}
+
+/* Каждая — в рамке цвета полосок шапки, с просветом 8 px.
+   Картинка любого размера вписывается целиком, без обрезки, не больше 434 px —
+   так две рамки помещаются в одну строку: 2 × (434 + 2 × 8 + 2 × 3) + 16 = 928 px */
+.humor-pic {
+  margin: 0;
+  width: fit-content;
+  max-width: min(456px, 100%);
+  padding: 8px;
+  border: 3px solid var(--tea-light);
+}
+
+.humor-pic__img {
+  display: block;
+  width: auto;
+  max-width: 100%;
+  height: auto;
+  max-height: 434px;
+  cursor: zoom-in;
+}
+
+/* Раздел «События сегодня»: слева праздник и факты, справа картинки в рамках, как в «Юморе».
+   Если места не хватает (две картинки, телефон) — картинки уходят под текст */
+.events {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  gap: 16px 24px;
+}
+
+.events__text { flex: 1 1 360px; }
+
+/* Одна картинка — справа от текста (рамка не шире 456 px, как в «Юморе»); две — под текстом, рядом */
+.events__pics { max-width: 456px; }
+
+.events__pics.is-two {
+  flex-basis: 100%;
+  max-width: none;
+}
+
+.events__pics[hidden] { display: none; }
+
+.events__text > * + * { margin-top: 24px; }
+
+.event__title {
+  margin: 0 0 12px;
+  font: 700 24px/1.25 var(--serif);
+  color: var(--tea);
+}
+
+.event__facts {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+/* Факты — с чайным ромбиком вместо точки */
+.event__facts li {
+  position: relative;
+  margin-bottom: 10px;
+  padding-left: 22px;
+}
+
+.event__facts li::before {
+  content: '◆';
+  position: absolute;
+  left: 0;
+  top: .1em;
+  color: var(--tea-light);
+  font-size: 12px;
+}
+
+/* Увеличенная картинка: окошко поверх страницы, сайт виден под полупрозрачным фоном */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 0, 0, .6);
+}
+
+.lightbox[hidden] { display: none; }
+
+/* Окошко — в рамке цвета полосок шапки, как картинки «Юмора»; не больше 90% экрана */
+.lightbox__window {
+  position: relative;
+  max-width: 90vw;
+  max-height: 90vh;
+  padding: 8px;
+  border: 3px solid var(--tea-light);
+  background: var(--paper);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .4);
+}
+
+/* Картинка вписана в окошко целиком: 90% экрана минус просвет и рамка (2 × (8 + 3) = 22 px) */
+.lightbox__img {
+  display: block;
+  max-width: calc(90vw - 22px);
+  max-height: calc(90vh - 22px);
+  object-fit: contain;
+}
+
+/* Увеличенный график: почти во всё окошко, как картинка, но по высоте чуть ниже — чтобы не был вытянутым */
+.lightbox__chart {
+  position: relative;
+  width: calc(90vw - 22px);
+  height: calc(80vh - 22px);
+}
+
+/* Крестик — кружок на правом верхнем углу окошка */
+.lightbox__close {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 32px;
+  height: 32px;
+  padding: 0;
+  border: 2px solid var(--tea-light);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--tea);
+  cursor: pointer;
+}
+
+/* Две линии через центр, длиной во внутренний диаметр кружка — перечёркивают его от края до края */
+.lightbox__close::before,
+.lightbox__close::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+}
+
+.lightbox__close::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+.lightbox__close:hover { background: var(--tea-light); color: #fff; }
+
+/* Круглое окошко — портреты участников суда. Крестик — на окружности, справа сверху (под 45°) */
+.lightbox.is-round .lightbox__window { border-radius: 50%; }
+.lightbox.is-round .lightbox__img {
+  width: min(512px, 80vmin);
+  height: min(512px, 80vmin);
+  max-width: none;
+  max-height: none;
+  border-radius: 50%;
+  object-fit: cover;
+}
+.lightbox.is-round .lightbox__close { top: calc(14.6% - 16px); right: calc(14.6% - 16px); }
+
+/* Калькулятор: окошко в рамке, как у увеличенной картинки, но без тёмного фона —
+   сайтом можно пользоваться, пока калькулятор открыт. Положение задаёт js/calc.js */
+.calc {
+  position: fixed;
+  z-index: 90; /* ниже увеличенной картинки */
+  width: 300px;
+  padding: 8px;
+  border: 3px solid var(--tea-light);
+  background: var(--paper);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, .3);
+}
+
+.calc[hidden] { display: none; }
+
+/* Полоса для перетаскивания */
+.calc__bar {
+  margin: -8px -8px 8px;
+  padding: 6px 12px;
+  background: var(--tea-light);
+  color: #fff;
+  font: 700 14px/1.4 var(--sans);
+  letter-spacing: .05em;
+  cursor: grab;
+  touch-action: none; /* на телефоне палец двигает окошко, а не страницу */
+  user-select: none;
+}
+
+.calc.is-dragging .calc__bar { cursor: grabbing; }
+
+.calc__screen {
+  padding: 8px 10px;
+  margin-bottom: 8px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  text-align: right;
+}
+
+.calc__screen p { margin: 0; }
+
+.calc__expr,
+.calc__info {
+  min-height: 1.4em;
+  color: var(--muted);
+  font: 500 13px/1.4 var(--mono);
+  overflow-wrap: anywhere;
+}
+
+.calc__info { color: var(--tea); }
+
+.calc__value {
+  font: 500 30px/1.2 var(--mono);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.calc__value.is-long { font-size: 20px; line-height: 1.8; }
+
+.calc__keys {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 6px;
+}
+
+.calc__keys button {
+  padding: 10px 0;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  color: var(--ink);
+  font: 500 18px/1 var(--mono);
+  cursor: pointer;
+}
+
+.calc__keys button:hover { background: var(--tea-soft); }
+.calc__keys button:active { transform: translateY(1px); }
+
+.calc__keys .calc__op { background: var(--paper); color: var(--tea); }
+
+.calc__keys .calc__fn {
+  background: var(--tea-soft);
+  color: var(--tea);
+  font: 700 12px/1.2 var(--sans);
+}
+
+/* Кнопки курса $ и € — по две колонки, дата крупно, под ней пояснение */
+.calc__keys .calc__rate {
+  grid-column: span 2;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 3px;
+  padding: 7px 4px;
+  background: var(--tea-soft);
+  color: var(--tea);
+  font: 700 13px/1.2 var(--sans);
+}
+
+.calc__rate small {
+  color: var(--muted);
+  font: 500 11px/1.2 var(--sans);
+}
+
+.calc__keys .calc__rate:disabled {
+  opacity: .5;
+  cursor: default;
+  background: var(--paper);
+}
+
+.calc__keys .calc__eq {
+  background: var(--tea);
+  border-color: var(--tea);
+  color: #fff;
+}
+
+.calc__keys .calc__eq:hover { background: var(--tea-dark); }
+
+/* История — нажатие подставляет результат; «Очистить» стирает её */
+.calc__past {
+  margin-top: 8px;
+  padding-top: 6px;
+  border-top: 1px solid var(--line);
+}
+
+.calc__past[hidden] { display: none; }
+
+.calc__past-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 2px;
+  color: var(--muted);
+  font: 700 12px/1.4 var(--sans);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+/* Маленькие кнопки «Очистить» историю калькулятора и «Стереть» подпись в заявлении суда */
+.calc__clear,
+.court-sign__clear {
+  padding: 2px 8px;
+  border: 1px solid var(--line);
+  background: var(--paper-2);
+  color: var(--tea);
+  font: 700 12px/1.4 var(--sans);
+  cursor: pointer;
+}
+
+.calc__clear:hover,
+.court-sign__clear:hover { background: var(--tea-soft); }
+
+.calc__history {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.calc__history button {
+  display: block;
+  width: 100%;
+  padding: 3px 4px;
+  border: none;
+  background: none;
+  color: var(--muted);
+  font: 500 12px/1.4 var(--mono);
+  text-align: right;
+  cursor: pointer;
+}
+
+.calc__history button:hover { color: var(--tea); background: var(--tea-soft); }
+
+/* Пока открыта увеличенная картинка, страница под ней не прокручивается */
+body.lightbox-open { overflow: hidden; }
+
+/* Финансовый суд: тёмный «зал суда» в рамке по ширине колонки текста — главная фишка сайта.
+   Окно заявления и карточки заседания внутри — светлые, как бумага на столе судьи */
+.section.court-hall {
+  --hall-text: var(--paper);
+  --hall-muted: #c9b9a6;
+  --hall-gap: 20px; /* одинаковый отступ между всеми блоками раздела */
+  margin: 36px 0 20px;
+  padding: 32px 32px 36px;
+  border: 3px double var(--tea-light);
+  color: var(--hall-text);
+  background:
+    radial-gradient(ellipse at 50% 0%, rgba(200, 166, 133, .18), transparent 60%),
+    var(--hall);
+}
+
+/* Блоки раздела идут с одинаковым шагом: заголовок, картинка, копилка, сроки, приглашение, заседание */
+.section.court-hall > * { margin-top: 0; margin-bottom: 0; }
+.section.court-hall > * + * { margin-top: var(--hall-gap); }
+.section.court-hall > #court-appeals:empty { display: none; }
+.court-hall .court-appeal + .court-appeal { margin-top: 12px; }
+
+.court-hall .section__head h2 { color: var(--hall-text); font-size: 40px; }
+
+/* Весы после названия — тот же значок, что в меню */
+.court-hall__icon {
+  width: .8em;
+  height: .8em;
+  margin-left: 10px;
+  vertical-align: -.05em;
+  fill: none;
+  stroke: var(--tea-light);
+  stroke-width: 1.8;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.court-hall .section__note { color: var(--hall-muted); }
+.court-hall .to-top { color: var(--tea-light); }
+.court-hall .to-top:hover { border-bottom-color: var(--tea-light); }
+
+/* Кнопка «Звук» — справа в строке с названием, скромная, как «↑ К меню». Выключен: динамик перечёркнут */
+.court-sound {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-left: auto; /* «↑ К меню» прижимается к названию, кнопка — к правому краю */
+  padding: 0;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: none;
+  color: var(--hall-muted);
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  line-height: 1.4;
+  cursor: pointer;
+  white-space: nowrap;
+}
+.court-sound:hover { color: var(--tea-light); border-bottom-color: var(--tea-light); }
+.court-sound.is-on { color: var(--tea-light); }
+.court-sound svg {
+  width: 18px;
+  height: 18px;
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+.court-sound__body { fill: currentColor; }
+.court-sound .court-sound__waves { display: none; }
+.court-sound.is-on .court-sound__waves { display: inline; }
+.court-sound.is-on .court-sound__off { display: none; }
+
+/* Картинка под названием — по ширине рамки, целиком, в своих пропорциях, без обрезки */
+.section.court-hall > .court-banner {
+  margin-left: 0; /* у figure по умолчанию отступы по бокам — убираем, картинка во всю ширину рамки */
+  margin-right: 0;
+  border: 3px solid var(--tea-light);
+  line-height: 0;
+}
+
+.court-banner[hidden] { display: none; }
+
+.court-banner img {
+  display: block;
+  width: 100%;
+  height: auto;
+  cursor: zoom-in; /* по щелчку — увеличенная, как картинки «Юмора» */
+}
+
+/* Приглашение и главная кнопка — светлая на тёмном.
+   Строки текста с одинаковым интервалом: один межстрочный (1.6) и один шаг между абзацами (8 px) */
+.court-hall .court-start__text p { margin: 0; line-height: 1.6; }
+.court-hall .court-start__text p + p { margin-top: 8px; }
+
+.court-start__stats {
+  color: var(--hall-muted);
+  font: 500 13px/1.6 var(--mono);
+  letter-spacing: .04em;
+}
+
+.court-start__stats[hidden] { display: none; }
+
+.court-hall .court-btn.court-start__btn {
+  padding: 16px 26px;
+  border-color: var(--hall-text);
+  background: var(--hall-text);
+  color: var(--hall);
+  font-size: 17px;
+  box-shadow: 0 6px 20px rgba(0, 0, 0, .35);
+}
+
+.court-hall .court-btn.court-start__btn:hover { background: #fff; }
+
+/* Светлые карточки на тёмном фоне — текст в них обычный, тёмный */
+.court-hall .panel,
+.court-hall .court-appeal { color: var(--ink); }
+
+/* Копилка «Суд уже сберёг вам …» и карточки условных сроков */
+.court-saved {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px 12px;
+  padding: 10px 16px;
+  border-left: 4px solid var(--up);
+  background: #e5efe6;
+  color: var(--up);
+  font-weight: 700;
+}
+
+.court-saved[hidden] { display: none; }
+
+/* Двойной класс — чтобы перебить цвета .court-btn, которые описаны ниже */
+.court-btn.court-saved__clear {
+  padding: 6px 12px;
+  font-size: 13px;
+  border-color: var(--up);
+  color: var(--up);
+  background: var(--paper-2);
+}
+
+.court-btn.court-saved__clear:hover { background: #d3e4d5; }
+
+.court-appeal {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  padding: 12px 16px;
+  border: 1px solid var(--line);
+  border-left: 4px solid var(--tea-light);
+  background: var(--paper-2);
+}
+
+.court-appeal.is-due { border-left-color: var(--tea); background: var(--tea-soft); }
+
+.court-appeal__text { flex: 1 1 260px; margin: 0; }
+
+/* Кнопка «Подать исковое заявление» в разделе */
+.court-start {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px 24px;
+}
+
+.court-start[hidden] { display: none; }
+
+.court-start__text { flex: 1 1 320px; margin: 0; }
+
+/* ---------- Исковое заявление: окно-бланк ---------- */
+
+/* Окно — как у увеличенной картинки, крестик на углу; прокручивается сам лист внутри */
+.court-modal__window {
+  width: min(720px, 90vw);
+  padding: 0;
+  background: #fffefb;
+}
+
+.court-doc {
+  --ink-blue: #2b3a67; /* «чернила» — всё, что вписано от руки */
+  max-height: 88vh;
+  overflow-y: auto;
+  padding: 40px 48px 32px;
+  font: 400 16px/1.7 var(--serif);
+  color: var(--ink);
+  /* лёгкие линии, как на бланке */
+  background: repeating-linear-gradient(transparent 0 27px, rgba(29, 26, 22, .04) 27px 28px);
+}
+
+.court-doc p { margin: 0; }
+
+/* Шапка: кому и от кого — справа, как в настоящем иске */
+.court-doc__to {
+  margin: 0 0 28px auto;
+  width: fit-content;
+  max-width: 100%;
+  font-size: 15px;
+  line-height: 1.6;
+}
+
+.court-doc i,
+.court-doc__fill {
+  font-family: var(--serif);
+  font-style: italic;
+  color: var(--ink-blue);
+}
+
+.court-doc__title {
+  margin: 0;
+  text-align: center;
+  font: 700 22px/1.3 var(--serif);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+}
+
+.court-doc__subtitle {
+  margin-bottom: 24px !important;
+  text-align: center;
+  font-style: italic;
+  color: var(--muted);
+}
+
+.court-doc__claim { text-indent: 32px; }
+
+/* Поля, вписанные прямо в текст: только подчёркивание, как строка бланка */
+.court-doc__fill {
+  min-width: 0;
+  padding: 0 4px;
+  border: none;
+  border-bottom: 1px dashed var(--muted);
+  background: transparent;
+  font-size: 18px;
+  text-indent: 0;
+}
+
+.court-doc__fill:focus { outline: none; border-bottom: 2px solid var(--ink-blue); }
+.court-doc__fill::placeholder { color: var(--placeholder); }
+.court-doc__fill--item { width: 260px; max-width: 100%; }
+.court-doc__fill--price { width: 120px; }
+.court-doc__nowrap { white-space: nowrap; }
+
+.court-doc__cur {
+  border: none;
+  border-bottom: 1px dashed var(--muted);
+  background: transparent;
+  font: italic 400 18px/1.2 var(--serif);
+  color: var(--ink-blue);
+  cursor: pointer;
+}
+
+/* Пометка суда под строкой покупки: «Суду нужен тип товара» — как замечание красным карандашом на полях */
+.court-doc__hint {
+  margin: 10px 0 0 32px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--down);
+  background: #fbf0ee;
+  color: var(--down);
+  font: 400 14px/1.5 var(--sans);
+}
+
+.court-doc__hint[hidden] { display: none; }
+
+.court-doc__hint-opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 6px;
+}
+
+.court-doc__hint-btn {
+  padding: 3px 10px;
+  border: 1px solid var(--down);
+  background: #fff;
+  color: var(--down);
+  font: 700 13px/1.4 var(--sans);
+  cursor: pointer;
+}
+
+.court-doc__hint-btn:hover { background: var(--down); color: #fff; }
+
+.court-doc__section {
+  margin: 24px 0 4px !important;
+  font-weight: 700;
+}
+
+.court-q {
+  margin: 10px 0 0;
+  padding: 0;
+  border: none;
+}
+
+.court-q legend { padding: 0; margin-bottom: 4px; }
+
+/* Варианты ответа — клетки ☐, выбранная отмечается галочкой ☑ «от руки» */
+.court-q__opts {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 20px;
+  padding-left: 20px;
+}
+
+.court-q__opt { position: relative; cursor: pointer; }
+
+.court-q__opt input {
+  position: absolute;
+  opacity: 0;
+  inset: 0;
+  margin: 0;
+  cursor: pointer;
+}
+
+.court-q__opt span {
+  display: inline-block;
+  position: relative;
+  padding-left: 26px;
+  font-size: 15px;
+}
+
+.court-q__opt span::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: .3em;
+  width: 15px;
+  height: 15px;
+  border: 1.5px solid var(--ink);
+}
+
+.court-q__opt span::after {
+  content: '✓';
+  position: absolute;
+  left: 2px;
+  top: -.3em;
+  font: italic 700 22px/1 var(--serif);
+  color: var(--ink-blue);
+  opacity: 0;
+  transform: scale(.4) rotate(-15deg);
+  transition: opacity .15s, transform .2s;
+}
+
+.court-q__opt input:checked + span::after { opacity: 1; transform: none; }
+.court-q__opt input:checked + span { color: var(--ink-blue); }
+.court-q__opt:hover span::before { background: var(--tea-soft); }
+.court-q__opt input:focus-visible + span { outline: 2px solid var(--tea); outline-offset: 2px; }
+
+/* Пока покупка не названа, ответы — пустые строки бланка: квадратик и черта вместо надписи (js/court.js).
+   Как только надписи появляются, они проступают, будто их вписали */
+.is-blank .court-q__opt,
+.is-blank .court-q__opt input { cursor: default; }
+.is-blank .court-q__opt span {
+  min-width: 130px;
+  min-height: 1.5em;
+  background: linear-gradient(var(--line), var(--line)) no-repeat 26px 100% / calc(100% - 26px) 1px;
+}
+.is-blank .court-q__opt:hover span::before { background: none; }
+#court-questions:not(.is-blank) .court-q__opt span { animation: court-fill .5s ease-out; }
+@keyframes court-fill { from { opacity: 0; } }
+
+.court-doc__oath {
+  margin-top: 20px !important;
+  font-style: italic;
+}
+
+/* Подвал: дата слева, подпись справа */
+.court-doc__foot {
+  position: relative; /* для штампа */
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 8px 24px;
+  margin-top: 20px;
+}
+
+.court-doc__signline { display: flex; flex-wrap: wrap; align-items: flex-end; gap: 8px; }
+
+/* Поле подписи: расписываются мышкой или пальцем. Черта не по краю, а на 80 px из 120:
+   росчерк, заехавший под черту, тоже виден — как на бумаге */
+.court-sign {
+  position: relative;
+  width: 240px;
+  height: 120px;
+  margin-bottom: -40px; /* часть поля под чертой не раздвигает бланк */
+  background: repeating-linear-gradient(90deg, transparent 0 8px, rgba(43, 58, 103, .04) 8px 9px);
+  cursor: crosshair;
+  touch-action: none; /* на телефоне палец рисует, а не прокручивает лист */
+}
+
+.court-sign::after {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 80px;
+  border-top: 1px solid var(--ink);
+  pointer-events: none;
+}
+
+.court-sign canvas { display: block; width: 100%; height: 100%; }
+
+.court-sign__hint {
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 80px;
+  display: grid;
+  place-items: center;
+  color: var(--placeholder);
+  font: italic 14px/1.2 var(--serif);
+  pointer-events: none;
+}
+
+.court-sign.has-ink .court-sign__hint { display: none; }
+
+.court-doc__status {
+  margin-top: 8px !important;
+  text-align: center;
+  color: var(--muted);
+  font: 400 14px/1.4 var(--sans);
+}
+
+.court-btn.court-doc__submit {
+  display: block;
+  margin: 28px auto 0;
+  padding: 14px 28px;
+  font-size: 16px;
+}
+
+.court-btn.court-doc__submit:disabled { opacity: .5; cursor: default; }
+
+/* Штамп канцелярии: падает на лист с размаху, слегка задевая подпись — как в жизни */
+.court-doc__stamp {
+  position: absolute;
+  right: 150px;
+  bottom: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 8px 18px;
+  border: 3px double var(--down);
+  border-radius: 8px;
+  color: var(--down);
+  font: 700 13px/1.4 var(--sans); /* в моноширинном шрифте нет знака № */
+  letter-spacing: .06em;
+  transform: rotate(-9deg);
+  opacity: .9;
+  animation: court-stamp-drop .45s cubic-bezier(.3, 1.6, .5, 1);
+  pointer-events: none;
+}
+
+.court-doc__stamp[hidden] { display: none; }
+
+.court-doc__stamp-big {
+  font-size: 22px;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+}
+
+@keyframes court-stamp-drop {
+  from { opacity: 0; transform: rotate(-9deg) scale(2.4); }
+}
+
+.court-btn {
+  font: 700 15px/1 var(--sans);
+  padding: 10px 16px;
+  border: 1px solid var(--tea);
+  background: var(--paper);
+  color: var(--tea);
+  cursor: pointer;
+}
+
+.court-btn:hover { background: var(--tea-soft); }
+
+.court-btn--main {
+  background: var(--tea);
+  color: #fff;
+}
+
+.court-btn--main:hover { background: var(--tea-dark); }
+
+.court-session[hidden] { display: none; }
+
+/* Архив дел за неделю: свёрнутый блок, внутри — дела, каждое раскрывается щелчком */
+.court-archive[hidden] { display: none; }
+
+.court-archive__stats {
+  margin: 0 0 12px;
+  color: var(--muted);
+  font: 500 13px/1.6 var(--mono);
+}
+
+.court-case { border-top: 1px solid var(--line); }
+.court-case:last-of-type { border-bottom: 1px solid var(--line); }
+
+/* Строка дела: дата · номер · покупка и сумма · печать · что было дальше */
+.court-case__head {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 12px;
+  padding: 10px 0;
+  cursor: pointer;
+  list-style: none;
+}
+
+.court-case__head::-webkit-details-marker { display: none; }
+
+.court-case__head::before {
+  content: '▸';
+  color: var(--tea);
+  transition: transform .15s;
+}
+
+.court-case[open] > .court-case__head::before { transform: rotate(90deg); }
+.court-case__head:hover .court-case__item { color: var(--tea); }
+
+.court-case__date { color: var(--muted); font: 500 13px/1.4 var(--mono); }
+.court-case__num { color: var(--muted); font: 500 13px/1.4 var(--sans); } /* в моноширинном шрифте нет знака № */
+
+.court-case__item { flex: 1 1 180px; font-weight: 700; }
+
+/* Печать приговора — маленькая, в цвет печати в карточке приговора */
+.court-case__stamp {
+  padding: 1px 8px;
+  border: 2px solid currentColor;
+  border-radius: 4px;
+  font: 700 11px/1.5 var(--mono);
+  letter-spacing: .08em;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+}
+
+.court-case__stamp.is-free { color: var(--up); }
+.court-case__stamp.is-wait { color: var(--tea); }
+.court-case__stamp.is-guilty { color: var(--down); }
+
+.court-case__outcome {
+  color: var(--muted);
+  font-size: 13px;
+  font-style: italic;
+}
+
+.court-case__outcome:empty { display: none; }
+
+.court-case__body { padding: 0 0 12px 22px; font-size: 14px; }
+
+.court-case__motive {
+  margin: 0 0 8px;
+  padding-left: 10px;
+  border-left: 3px solid var(--tea-light);
+  font-style: italic;
+}
+
+.court-case__motive strong { font-style: normal; }
+
+.court-case__answers { margin: 0; padding-left: 18px; color: var(--muted); }
+
+.court-btn.court-archive__clear {
+  margin-top: 12px;
+  padding: 6px 12px;
+  font-size: 13px;
+}
+
+/* Крестик «свернуть диалог» в строке заголовка заседания: кружок как у окон, в свёрнутом виде — плюс */
+.court-fold {
+  position: relative;
+  flex: none;
+  width: 32px;
+  height: 32px;
+  margin-left: auto;
+  padding: 0;
+  border: 2px solid var(--tea-light);
+  border-radius: 50%;
+  background: var(--paper);
+  color: var(--tea);
+  cursor: pointer;
+}
+
+.court-fold::before,
+.court-fold::after {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 100%;
+  height: 2px;
+  background: currentColor;
+  transform: translate(-50%, -50%) rotate(45deg);
+  transition: transform .2s;
+}
+
+.court-fold::after { transform: translate(-50%, -50%) rotate(-45deg); }
+
+/* Плюс — линии покороче, чтобы не упирались в край кружка */
+.court-fold.is-folded::before { width: 60%; transform: translate(-50%, -50%) rotate(0deg); }
+.court-fold.is-folded::after { width: 60%; transform: translate(-50%, -50%) rotate(90deg); }
+
+.court-fold:hover { background: var(--tea-light); color: #fff; }
+
+.court-log[hidden] { display: none; }
+
+/* Длинный номер дела переносится, а крестик остаётся справа в той же строке */
+.court-session .panel__head { flex-wrap: nowrap; align-items: flex-start; }
+
+/* Реплики заседания: у каждой стороны свой цвет полоски */
+.court-log {
+  list-style: none;
+  margin: 0 0 20px;
+  padding: 0;
+}
+
+.court-log__line {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  margin-bottom: 8px;
+  padding: 8px 12px;
+  border-left: 3px solid var(--line);
+  animation: court-in .35s ease-out;
+}
+
+.court-log__speech { flex: 1; min-width: 0; }
+
+/* Портрет говорящего — кружок в рамке цвета его стороны */
+.court-log__face {
+  flex: none;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 2px solid var(--line);
+  background-color: var(--paper);
+  background-repeat: no-repeat;
+  background-size: 175%;            /* увеличение: в кружке лицо, а не плечи и пустой фон */
+  background-position: 50% 38%;     /* лицо на портретах чуть выше центра */
+  padding: 0;
+  cursor: zoom-in;
+}
+
+.court-log__face:disabled { cursor: default; }
+.court-log__face:not(:disabled):hover { box-shadow: 0 0 0 3px var(--tea-soft); }
+
+.court-log__line.is-pro .court-log__face { border-color: var(--down); }
+.court-log__line.is-def .court-log__face { border-color: var(--up); }
+.court-log__line.is-judge .court-log__face { border-color: var(--tea); }
+.court-log__line.is-clerk .court-log__face { border-color: var(--tea-light); }
+
+.court-log__line.is-pro { border-left-color: var(--down); }
+.court-log__line.is-def { border-left-color: var(--up); }
+.court-log__line.is-judge { border-left-color: var(--tea); background: var(--tea-soft); font-style: italic; }
+
+.court-log__who { font-weight: 700; }
+.court-log__line.is-pro .court-log__who { color: var(--down); }
+.court-log__line.is-def .court-log__who { color: var(--up); }
+.court-log__line.is-judge .court-log__who { color: var(--tea); }
+
+/* Свидетели, Календарь и Желание — на чуть другом фоне, полоска — цвет стороны */
+.court-log__line.is-witness { background: var(--paper-2); }
+.court-log__line.is-desire { border-left-color: var(--tea-light); }
+.court-log__line.is-desire .court-log__face { border-color: var(--tea-light); }
+.court-log__line.is-desire .court-log__who { color: var(--tea); }
+
+/* Ремарка зала: курсив без портрета и полоски */
+.court-log__line.is-remark {
+  border-left-color: transparent;
+  padding: 2px 12px 2px 15px;
+  color: var(--muted);
+  font-style: italic;
+  font-size: .92em;
+}
+
+/* «…» — говорящий набирается духу */
+.court-log__dots {
+  display: inline-block;
+  margin-left: 4px;
+  letter-spacing: 2px;
+  animation: court-dots 1s ease-in-out infinite;
+}
+
+@keyframes court-dots {
+  50% { opacity: .3; }
+}
+
+/* Последнее слово: три фразы на выбор */
+.court-log__choice {
+  margin: 4px 0 12px;
+  padding: 12px;
+  border: 1px dashed var(--tea-light);
+  border-radius: 8px;
+  animation: court-in .35s ease-out;
+}
+
+.court-log__choice-title { margin: 0 0 8px; font-weight: 700; color: var(--tea); }
+
+.court-log__choice-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+
+@keyframes court-in {
+  from { opacity: 0; transform: translateY(6px); }
+}
+
+/* Приговор: карточка-документ с печатью в углу */
+.court-verdict {
+  position: relative;
+  padding: 20px 24px;
+  border: 3px double var(--ink);
+  background: var(--paper);
+  animation: court-in .5s ease-out;
+}
+
+.court-verdict__stamp {
+  position: absolute;
+  top: 18px;
+  right: 18px;
+  padding: 6px 12px;
+  border: 3px solid currentColor;
+  border-radius: 6px;
+  font: 700 18px/1 var(--mono);
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  transform: rotate(-8deg);
+  opacity: .85;
+  animation: court-stamp .4s ease-in;
+}
+
+.court-verdict.is-free .court-verdict__stamp { color: var(--up); }
+.court-verdict.is-wait .court-verdict__stamp { color: var(--tea); }
+.court-verdict.is-guilty .court-verdict__stamp { color: var(--down); }
+
+@keyframes court-stamp {
+  from { opacity: 0; transform: rotate(-8deg) scale(2.2); }
+}
+
+.court-verdict__label {
+  margin: 0;
+  color: var(--muted);
+  font: 500 13px/1.4 var(--mono);
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.court-verdict__title {
+  margin: 4px 0 8px;
+  padding-right: 150px; /* место под печать */
+  font: 700 24px/1.25 var(--serif);
+}
+
+.court-verdict__text { margin: 0 0 12px; }
+
+/* Мотивировка: решающий довод, по которому вынесен приговор */
+.court-verdict__motive {
+  margin: 0 0 12px;
+  padding-left: 12px;
+  border-left: 3px solid var(--tea-light);
+  font-style: italic;
+}
+
+.court-verdict__motive strong { font-style: normal; }
+
+.court-verdict__sub { margin: 0 0 4px; font-weight: 700; }
+
+.court-verdict__measures {
+  margin: 0 0 8px;
+  padding-left: 20px;
+  font-family: var(--mono);
+  font-size: 14px;
+}
+
+.court-verdict__payback {
+  margin: 0 0 12px;
+  padding: 8px 12px;
+  background: var(--tea-soft);
+}
+
+.court-verdict__actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px 12px;
+  margin-top: 16px;
+}
+
+.court-verdict__done { margin: 0; color: var(--muted); }
+
+@media (prefers-reduced-motion: reduce) {
+  .court-log__line, .court-log__dots, .court-log__choice, .court-verdict, .court-verdict__stamp, .court-doc__stamp { animation: none; }
+}
+
+/* Новости */
+.news {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  counter-reset: news;
+}
+
+.news__item {
+  counter-increment: news;
+  display: grid;
+  grid-template-columns: 48px 1fr;
+  gap: 16px;
+  padding: 24px 0;
+  border-bottom: 1px solid var(--line);
+}
+
+.news__item::before {
+  content: counter(news);
+  font: 700 40px/1 var(--serif);
+  color: var(--tea);
+}
+
+.news__tag {
+  display: inline-block;
+  margin: 0 0 8px;
+  padding: 2px 8px;
+  background: var(--tea-soft);
+  color: var(--tea);
+  font: 500 12px/1.6 var(--mono);
+  letter-spacing: .05em;
+  text-transform: uppercase;
+}
+
+.news__title {
+  margin: 0 0 8px;
+  font: 700 21px/1.3 var(--serif);
+}
+
+.news__text {
+  margin: 0 0 8px;
+  text-align: justify;
+  hyphens: auto; /* переносы, чтобы между словами не было больших пробелов */
+}
+
+.news__source {
+  color: var(--tea);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+/* Архив за неделю */
+.archive { margin-top: 24px; }
+
+.archive__empty {
+  margin: 0;
+  color: var(--muted);
+}
+
+.archive__day { border-top: 1px solid var(--line); }
+
+.archive__day summary {
+  padding: 10px 0;
+  cursor: pointer;
+  font: 500 15px/1.4 var(--mono);
+}
+
+.archive__day summary:hover { color: var(--tea); }
+
+.archive__day ul {
+  margin: 0 0 12px;
+  padding-left: 20px;
+}
+
+.archive__day li { margin-bottom: 6px; }
+
+.archive__day a {
+  color: var(--ink);
+  text-decoration-color: var(--line);
+}
+
+.archive__day a:hover { color: var(--tea); }
+
+.archive__day span {
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.news__empty {
+  color: var(--muted);
+  padding: 24px 0;
+}
+
+/* Подвал */
+.footer {
+  margin-top: 48px;
+  border-top: 1px solid var(--line);
+  padding: 24px 0 40px;
+  color: var(--muted);
+  font-size: 14px;
+}
+
+.footer p { margin: 0 0 4px; }
+
+/* Телефон */
+@media (max-width: 600px) {
+  .tiles { grid-template-columns: 1fr; }
+  .news__item { grid-template-columns: 32px 1fr; gap: 12px; }
+  .news__item::before { font-size: 28px; }
+  .nav { gap: 8px; }
+  .court-session { padding: 16px 12px; }
+  .court-doc { padding: 44px 16px 24px; font-size: 15px; }
+  .court-doc__to { margin-bottom: 20px; font-size: 14px; }
+  .court-doc__title { font-size: 18px; }
+  .court-doc__claim { text-indent: 0; }
+  .court-doc__fill--item { width: 100%; }
+  .court-q__opts { padding-left: 0; }
+  .court-doc__stamp { right: 60px; bottom: 30px; }
+  /* На телефоне поле подписи во всю ширину, «Стереть» — под ним, а не поверх нижней части поля */
+  .court-doc__signline { flex-direction: column; align-items: flex-start; width: 100%; }
+  .court-sign { width: 100%; margin-bottom: 0; }
+  .court-doc__hint { margin-left: 0; }
+  .section.court-hall { padding: 22px 14px 24px; }
+  .court-hall .section__head h2 { font-size: 28px; white-space: nowrap; } /* весы не отрываются от названия */
+  .court-log__line { gap: 10px; padding: 8px 10px; }
+  .court-log__face { width: 36px; height: 36px; }
+  .court-hall .court-btn.court-start__btn { width: 100%; }
+  .court-verdict { padding: 14px 12px; }
+  .court-verdict__measures { padding-left: 16px; font-size: 12px; }
+  .court-verdict__stamp { position: static; display: inline-block; margin-bottom: 12px; font-size: 15px; }
+  .court-verdict__title { padding-right: 0; }
+  .deadline { grid-template-columns: 56px 1fr; gap: 12px; padding: 12px; }
+  .deadline__day { font-size: 28px; }
+  .deadline__month { font-size: 11px; }
+  /* В таблице сроков на телефоне — без колонки «Основание» и с меньшими отступами */
+  .rate-table.deadlines-table th:last-child,
+  .rate-table.deadlines-table td:last-child { display: none; }
+  .rate-table.deadlines-table th,
+  .rate-table.deadlines-table td { padding: 8px 4px; }
+  /* Фиксированные колонки даты и налога — текст «Что сделать» переносится и не вылезает за край */
+  .rate-table.deadlines-table { table-layout: fixed; }
+  .rate-table.deadlines-table th:nth-child(1) { width: 84px; }
+  .rate-table.deadlines-table th:nth-child(2) { width: 72px; }
+  .deadlines-table__date { font-size: 12px; }
+  .deadlines-table__tax { font-size: 10px; }
+  #deadlines-fold { padding: 16px 12px; }
+}
+
+/* На телефоне кнопка выгрузки короче — «↓ CSV», чтобы поместилась рядом с заголовком и плюсом */
+@media (max-width: 480px) {
+  .export-btn__word { display: none; }
+  .export-btn::before { content: "↓ "; }
+}

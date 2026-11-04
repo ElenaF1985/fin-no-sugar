@@ -1,0 +1,391 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Финансы без сахара</title>
+  <meta name="description" content="Курсы ЦБ, налоговые сроки и главные финансовые новости дня — коротко и по делу. А ещё калькулятор с НДС, День в истории и шуточный Финансовый суд над импульсивными покупками.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,500;7..72,700&family=Manrope:wght@400;500;700&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    document.documentElement.classList.add('js');
+
+    // При обновлении страница всегда открывается сверху:
+    // браузер не восстанавливает прокрутку и не прыгает к разделу из адреса (#rates, #news)
+    if ('scrollRestoration' in history) history.scrollRestoration = 'manual';
+    if (location.hash) history.replaceState(null, '', location.pathname + location.search);
+    window.addEventListener('load', function () { window.scrollTo(0, 0); });
+  </script>
+</head>
+<body>
+  <header class="masthead" id="top">
+    <div class="wrap">
+      <p class="masthead__date" id="today">&nbsp;</p>
+      <h1 class="masthead__title" aria-label="Финансы без сахара"><span class="title-word" aria-hidden="true">Финансы</span> <em class="title-typed" aria-hidden="true">без&nbsp;сахара</em><span class="title-caret" aria-hidden="true"></span></h1>
+      <p class="masthead__lead">Важное и любопытное — за одну чашку чая</p>
+      <nav class="nav" aria-label="Разделы">
+        <!-- Все пункты — в рамке со значком после надписи; «Финансовый суд» — главная фишка, рамка и надпись красные, как «сегодня» в сроках -->
+        <a href="#deadlines" class="nav__accent" id="nav-deadlines" data-tip="Пока не сгорело — загляните" hidden>Горящие сроки<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21c-3.9 0-6.5-2.6-6.5-6.2 0-3.3 2.4-5.4 3.6-8.3.3 1.6 1.1 2.9 2.3 3.6.2-2.8 1.5-5.4 3.7-7.1-.3 2.6.6 4.6 1.9 6.5 1.1 1.6 1.6 3.3 1.6 5.2C18.6 18.4 16 21 12 21z"/><path d="M12 21c-1.6 0-2.8-1.2-2.8-2.9 0-1.6 1.2-2.5 1.8-3.9.6 1.1 1.5 1.5 2.1 2.3.5.6.7 1.1.7 1.7 0 1.6-.9 2.8-1.8 2.8z"/></svg></a>
+        <a href="#rates" class="nav__accent" data-tip="Доллар, евро и их настроение">Курсы валют<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M3 3v18h18"/><path d="M6.5 15.5l4-4.5 3 3 6-7"/><path d="M15.5 7h4v4"/></svg></a>
+        <a href="#news" class="nav__accent" data-tip="Без воды">Новости дня<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M4 5h13v14a1.5 1.5 0 0 0 1.5 1.5H5.5A1.5 1.5 0 0 1 4 19V5z"/><path d="M17 9h3v10a1.5 1.5 0 0 1-3 0"/><path d="M7 8.5h7M7 12h7M7 15.5h4"/></svg></a>
+        <a href="#events" class="nav__accent" id="nav-events" data-tip="Нет повода не выпить" hidden>День в истории<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M3.5 10h17M8 3v4M16 3v4"/><path d="M12 13.5l.9 1.8 2 .3-1.45 1.4.35 2-1.8-.95-1.8.95.35-2-1.45-1.4 2-.3z"/></svg></a>
+        <a href="#court" class="nav__accent nav__accent--main" data-tip="Прежде чем купить — спросите суд">Финансовый суд<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M7 20h10M4 6h16M4 6l-2.5 6a2.5 2.5 0 0 0 5 0L4 6zm16 0l-2.5 6a2.5 2.5 0 0 0 5 0L20 6zM12 3a1.2 1.2 0 1 0 0 .01"/></svg></a>
+        <a href="#humor" class="nav__accent" id="nav-humor" data-tip="На злобу дня" hidden>Юмор<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M8 14.5c1 1.6 2.4 2.4 4 2.4s3-.8 4-2.4"/><path d="M9 9.5h.01M15 9.5h.01"/></svg></a>
+        <button type="button" class="nav__btn nav__accent" id="nav-calc" aria-controls="calc" aria-expanded="false" data-tip="Верный друг">Калькулятор<svg class="nav__icon" viewBox="0 0 24 24" aria-hidden="true"><rect x="5" y="2.5" width="14" height="19" rx="2"/><rect x="8" y="5.5" width="8" height="3.5" rx=".5"/><path d="M8.5 12.5h.01M12 12.5h.01M15.5 12.5h.01M8.5 15.5h.01M12 15.5h.01M15.5 15.5h.01M8.5 18.5h.01M12 18.5h3.5"/></svg></button>
+      </nav>
+    </div>
+  </header>
+
+  <main class="wrap">
+    <!-- Показывается, если есть сроки сегодня или в ближайшие 7 дней (js/deadlines.js) -->
+    <section class="section" id="deadlines" aria-labelledby="deadlines-title" hidden>
+      <div class="section__head">
+        <h2 id="deadlines-title">Горящие сроки</h2>
+        <a class="to-top" href="#top">↑ К меню</a>
+        <p class="section__note">Даты — с переносом с выходных и праздников</p>
+      </div>
+
+      <ol class="deadlines" id="deadlines-list"></ol>
+
+      <details class="panel fold" id="deadlines-fold">
+        <summary class="panel__title fold__head">Сроки на неделю</summary>
+        <div class="table-scroll">
+          <table class="rate-table deadlines-table">
+            <thead>
+              <tr><th>Дата</th><th>Налог</th><th>Что сделать</th><th>Основание</th></tr>
+            </thead>
+            <tbody id="deadlines-table-body">
+              <tr><td colspan="4" class="rate-table__wait">Загрузка…</td></tr>
+            </tbody>
+          </table>
+        </div>
+        <p class="panel__hint"><span id="deadlines-until"></span> Сроки — для организации на общей системе налогообложения; часть из них применяется только при условии, оно указано в скобках. Сверено с НК РФ и налоговым календарём ФНС.</p>
+      </details>
+    </section>
+
+    <section class="section" id="rates" aria-labelledby="rates-title">
+      <div class="section__head">
+        <h2 id="rates-title">Курсы валют</h2>
+        <a class="to-top" href="#top">↑ К меню</a>
+        <p class="section__note">Официальный курс Банка России</p>
+      </div>
+
+      <p class="rates-error" id="rates-error" hidden>Не удалось загрузить курсы. Проверьте подключение к интернету и обновите страницу.</p>
+
+      <div class="tiles">
+        <article class="tile" data-code="USD">
+          <div class="tile__head">
+            <p class="tile__code">USD · доллар США</p>
+            <p class="tile__day"></p>
+          </div>
+          <p class="tile__value">—</p>
+          <p class="tile__delta">&nbsp;</p>
+        </article>
+        <article class="tile" data-code="EUR">
+          <div class="tile__head">
+            <p class="tile__code">EUR · евро</p>
+            <p class="tile__day"></p>
+          </div>
+          <p class="tile__value">—</p>
+          <p class="tile__delta">&nbsp;</p>
+        </article>
+        <article class="tile">
+          <div class="tile__head">
+            <label class="tile__code" for="day-input">Курс на дату</label>
+            <input type="date" class="tile__date" id="day-input" disabled>
+          </div>
+          <div class="tile__pair" id="day-result" aria-live="polite"></div>
+        </article>
+      </div>
+
+      <div class="panel">
+        <div class="panel__head">
+          <h3 class="panel__title">Динамика курсов</h3>
+          <div class="period" role="group" aria-label="Период">
+            <button type="button" data-days="7" aria-pressed="true">7 дней</button>
+            <button type="button" data-days="14" aria-pressed="false">14 дней</button>
+            <button type="button" id="period-toggle" aria-pressed="false">Период</button>
+          </div>
+        </div>
+        <form class="date-form" id="period-form" hidden>
+          <label for="period-from">с</label>
+          <input type="date" id="period-from" required>
+          <label for="period-to">по</label>
+          <input type="date" id="period-to" required>
+          <button type="submit" id="period-submit">Показать</button>
+          <p class="date-form__note" id="period-note" aria-live="polite">Любой период с 01.01.2023.</p>
+        </form>
+        <div class="chart-box">
+          <canvas id="rate-chart" aria-label="График курсов доллара и евро" role="img"></canvas>
+        </div>
+      </div>
+
+      <details class="panel fold">
+        <summary class="panel__title fold__head">
+          Курс по дням
+          <button type="button" class="export-btn" id="export-btn" aria-label="Выгрузить в CSV" disabled><span class="export-btn__word">Выгрузить в </span>CSV</button>
+        </summary>
+        <table class="rate-table">
+          <thead>
+            <tr><th>Дата</th><th>USD, ₽</th><th>EUR, ₽</th></tr>
+          </thead>
+          <tbody id="rate-table-body">
+            <tr><td colspan="3" class="rate-table__wait">Загрузка…</td></tr>
+          </tbody>
+        </table>
+        <p class="panel__hint">ЦБ устанавливает курс не на каждый календарный день: в выходные и праздники действует последний установленный курс. В таблице за период такие дни выделены серым — наведите на строку, чтобы увидеть, от какой даты курс.</p>
+      </details>
+    </section>
+
+    <section class="section" id="news" aria-labelledby="news-title">
+      <div class="section__head">
+        <h2 id="news-title">Новости дня</h2>
+        <a class="to-top" href="#top">↑ К меню</a>
+        <p class="section__note" id="news-date">&nbsp;</p>
+      </div>
+
+      <p class="news-stale" id="news-stale" hidden></p>
+
+      <ol class="news" id="news-list"></ol>
+
+      <details class="panel fold archive">
+        <summary class="panel__title fold__head">Архив новостей за неделю</summary>
+        <div id="news-archive"></div>
+      </details>
+    </section>
+
+    <!-- Показывается, только если сегодня есть праздник из data/events.js или data/events-daily.js (js/events.js) -->
+    <section class="section" id="events" aria-labelledby="events-title" hidden>
+      <div class="section__head">
+        <h2 id="events-title">День в истории</h2>
+        <a class="to-top" href="#top">↑ К меню</a>
+      </div>
+
+      <div class="events">
+        <div class="events__text" id="events-text"></div>
+        <div class="humor-pics events__pics" id="events-pics" hidden></div>
+      </div>
+    </section>
+
+    <!-- Шуточный суд над желанием что-нибудь купить: тексты в data/court.js, data/court-live.js, data/court-more.js, data/court-kinds.js (виды покупок)
+         и data/court-brands.js, логика в js/court.js, звуки в js/court-sound.js.
+         Тёмный «зал суда» в рамке по ширине колонки текста — главная фишка сайта -->
+    <section class="section court-hall" id="court" aria-labelledby="court-title">
+      <div class="section__head">
+        <h2 id="court-title">Финансовый суд<svg class="court-hall__icon" viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3v17M7 20h10M4 6h16M4 6l-2.5 6a2.5 2.5 0 0 0 5 0L4 6zm16 0l-2.5 6a2.5 2.5 0 0 0 5 0L20 6zM12 3a1.2 1.2 0 1 0 0 .01"/></svg></h2>
+        <a class="to-top" href="#top">↑ К меню</a>
+        <!-- Звуки суда (js/court-sound.js): по умолчанию выключены, выбор запоминается в браузере -->
+        <button type="button" class="court-sound" id="court-sound" aria-pressed="false">
+          <svg viewBox="0 0 24 24" aria-hidden="true"><path class="court-sound__body" d="M4 9h4l5-4v14l-5-4H4z"/><path class="court-sound__waves" d="M16.5 8.5a5 5 0 0 1 0 7M19 6a8.5 8.5 0 0 1 0 12"/><path class="court-sound__off" d="M16 9l6 6M22 9l-6 6"/></svg>
+          <span class="court-sound__text">Звук выключен</span>
+        </button>
+        <p class="section__note">Защита от импульсивных покупок — шуточная, но действенная</p>
+      </div>
+
+      <!-- Картинка под названием: pictures/court/Court.jpg, по ширине рамки, целиком. Нет файла — места под неё нет -->
+
+      <figure class="court-banner" id="court-banner" hidden>
+        <img id="court-banner-img" alt="Зарисовка из зала суда: судья с молотком, прокурор, адвокат, испуганная копилка и покупки на скамье подсудимых">
+      </figure>
+
+      <div class="court-saved" id="court-saved" hidden>
+        <span id="court-saved-text"></span>
+        <button type="button" class="court-btn court-saved__clear" id="court-saved-clear" title="Обнулить копилку суда">Обнулить</button>
+      </div>
+      <div id="court-appeals"></div>
+
+      <div class="court-start" id="court-start">
+        <div class="court-start__text">
+          <p>Хочется что-то купить?<br>Пусть суд решит, нужна ли покупка на самом деле. Заполните исковое заявление — заседание начнётся сразу.</p>
+          <p class="court-start__stats" id="court-stats" hidden></p>
+        </div>
+        <button type="button" class="court-btn court-btn--main court-start__btn" id="court-open">Подать исковое заявление</button>
+      </div>
+
+      <div class="panel court-session" id="court-session" aria-live="polite" hidden></div>
+
+      <!-- Архив дел за неделю: в браузере читателя, дела старше 7 дней удаляются сами (js/court.js) -->
+      <details class="panel fold court-archive" id="court-archive" hidden>
+        <summary class="panel__title fold__head">Архив дел за неделю</summary>
+        <p class="court-archive__stats" id="court-archive-stats"></p>
+        <div id="court-archive-list"></div>
+        <button type="button" class="court-btn court-archive__clear" id="court-archive-clear">Очистить архив</button>
+      </details>
+
+      <!-- Исковое заявление: окно в рамке, как увеличенная картинка, стоит на месте.
+           Закрывается крестиком или Esc; щелчок по фону не закрывает, чтобы не потерять заполненное.
+           Кнопка «Подать» работает, когда есть подпись; потом падает штамп «Принято» и начинается заседание (js/court.js) -->
+      <div class="lightbox" id="court-modal" role="dialog" aria-modal="true" aria-labelledby="court-doc-title" hidden>
+        <div class="lightbox__window court-modal__window">
+          <button class="lightbox__close" id="court-close" type="button" aria-label="Закрыть заявление"></button>
+          <form class="court-doc" id="court-form">
+            <div class="court-doc__to">
+              <p>В Финансовый суд города Москвы</p>
+              <p>Истец: <i>Желание купить</i></p>
+              <p>Цена иска: <i id="court-doc-sum">________</i></p>
+            </div>
+
+            <h3 class="court-doc__title" id="court-doc-title">Исковое заявление</h3>
+            <p class="court-doc__subtitle">о разрешении совершить покупку</p>
+
+            <p class="court-doc__claim">
+              Прошу суд разрешить покупку:
+              <input type="text" class="court-doc__fill court-doc__fill--item" id="court-item" maxlength="60" placeholder="например, кофемашина" aria-label="Что хотите купить" required>
+              стоимостью
+              <span class="court-doc__nowrap">
+                <input type="number" class="court-doc__fill court-doc__fill--price" id="court-price" min="1" step="any" inputmode="decimal" placeholder="60000" aria-label="Цена" required>
+                <select class="court-doc__cur" id="court-cur" aria-label="Валюта">
+                  <option value="RUB">₽</option>
+                  <option value="USD">$</option>
+                  <option value="EUR">€</option>
+                </select>.
+              </span>
+            </p>
+            <!-- Пометка суда: если покупка не узнана — просит уточнить тип товара (js/court.js) -->
+            <div class="court-doc__hint" id="court-hint" aria-live="polite" hidden></div>
+
+            <p class="court-doc__section">Обстоятельства дела:</p>
+            <div id="court-questions"></div>
+
+            <p class="court-doc__oath">Истец подтверждает, что ответы даны честно, под присягой.</p>
+
+            <div class="court-doc__foot">
+              <p>Дата: <i id="court-doc-date"></i></p>
+              <div class="court-doc__signline">
+                <span>Подпись:</span>
+                <!-- Поле подписи: расписываются мышкой или пальцем; черта на 2/3 высоты, росчерк под ней тоже виден -->
+                <div class="court-sign" id="court-sign" aria-label="Поле для подписи">
+                  <canvas id="court-sign-canvas"></canvas>
+                  <span class="court-sign__hint">распишитесь здесь</span>
+                </div>
+                <button type="button" class="court-sign__clear" id="court-sign-clear">Стереть</button>
+              </div>
+              <div class="court-doc__stamp" id="court-doc-stamp" aria-hidden="true" hidden></div>
+            </div>
+
+            <button type="submit" class="court-btn court-btn--main court-doc__submit" id="court-submit" disabled>Подать</button>
+            <p class="court-doc__status" id="court-sign-status">Без подписи заявление не принимается.</p>
+          </form>
+        </div>
+      </div>
+    </section>
+
+    <!-- Показывается, только если в pictures/humor/ нашлась картинка (js/humor.js) -->
+    <section class="section" id="humor" aria-labelledby="humor-title" hidden>
+      <div class="section__head">
+        <h2 id="humor-title">Юмор</h2>
+        <a class="to-top" href="#top">↑ К меню</a>
+      </div>
+
+      <div class="humor-pics">
+        <figure class="humor-pic">
+          <img class="humor-pic__img" id="humor-img" alt="Картинка дня">
+        </figure>
+        <figure class="humor-pic" id="humor-pic-2" hidden>
+          <img class="humor-pic__img" id="humor-img-2" alt="Вторая картинка дня">
+        </figure>
+      </div>
+    </section>
+
+    <!-- Увеличенная картинка «Юмора» и «Событий» в окошке: открывается по щелчку, закрывается крестиком, щелчком по фону или Esc (js/humor.js) -->
+    <div class="lightbox" id="lightbox" role="dialog" aria-modal="true" aria-label="Увеличенная картинка" hidden>
+      <div class="lightbox__window">
+        <button class="lightbox__close" id="lightbox-close" type="button" aria-label="Закрыть"></button>
+        <img class="lightbox__img" id="lightbox-img" alt="">
+      </div>
+    </div>
+
+    <!-- Увеличенный график «Динамика курсов» в таком же окошке: открывается по щелчку по графику (js/rates.js) -->
+    <div class="lightbox" id="chart-lightbox" role="dialog" aria-modal="true" aria-label="Увеличенный график курсов" hidden>
+      <div class="lightbox__window">
+        <button class="lightbox__close" id="chart-lightbox-close" type="button" aria-label="Закрыть"></button>
+        <div class="lightbox__chart">
+          <canvas id="rate-chart-big" aria-label="Увеличенный график курсов доллара и евро" role="img"></canvas>
+        </div>
+      </div>
+    </div>
+    <!-- Калькулятор: открывается из меню, окошко в такой же рамке, как увеличенная картинка;
+         перетаскивается за верхнюю полосу, закрывается крестиком или Esc (js/calc.js) -->
+    <div class="calc" id="calc" role="dialog" aria-labelledby="calc-bar" hidden>
+      <div class="calc__bar" id="calc-bar">Калькулятор</div>
+      <button class="lightbox__close" id="calc-close" type="button" aria-label="Закрыть калькулятор"></button>
+      <div class="calc__screen">
+        <p class="calc__expr" id="calc-expr"></p>
+        <p class="calc__value" id="calc-value" aria-live="polite">0</p>
+        <p class="calc__info" id="calc-info"></p>
+      </div>
+      <div class="calc__keys">
+        <!-- Курс ЦБ на дату из плитки «Курс на дату», без даты — на сегодня (подписи ставит js/calc.js) -->
+        <button type="button" class="calc__rate" data-key="USD" disabled><span>$ на дату</span><small></small></button>
+        <button type="button" class="calc__rate" data-key="EUR" disabled><span>€ на дату</span><small></small></button>
+        <button type="button" class="calc__fn" data-key="vat+" title="Начислить НДС на сумму">+НДС</button>
+        <button type="button" class="calc__fn" data-key="vat-" title="Выделить НДС из суммы с НДС">−НДС</button>
+        <button type="button" class="calc__fn" data-key="rate" title="Сменить ставку НДС">НДС 22%</button>
+        <button type="button" class="calc__fn" data-key="copy" title="Скопировать результат">Копир.</button>
+        <button type="button" class="calc__op" data-key="C" title="Сбросить (Delete)">C</button>
+        <button type="button" class="calc__op" data-key="back" title="Стереть цифру (Backspace)" aria-label="Стереть цифру">⌫</button>
+        <button type="button" class="calc__op" data-key="%">%</button>
+        <button type="button" class="calc__op" data-key="/" aria-label="Разделить">÷</button>
+        <button type="button" data-key="7">7</button>
+        <button type="button" data-key="8">8</button>
+        <button type="button" data-key="9">9</button>
+        <button type="button" class="calc__op" data-key="*" aria-label="Умножить">×</button>
+        <button type="button" data-key="4">4</button>
+        <button type="button" data-key="5">5</button>
+        <button type="button" data-key="6">6</button>
+        <button type="button" class="calc__op" data-key="-" aria-label="Минус">−</button>
+        <button type="button" data-key="1">1</button>
+        <button type="button" data-key="2">2</button>
+        <button type="button" data-key="3">3</button>
+        <button type="button" class="calc__op" data-key="+" aria-label="Плюс">+</button>
+        <button type="button" data-key="neg" title="Сменить знак" aria-label="Сменить знак">±</button>
+        <button type="button" data-key="0">0</button>
+        <button type="button" data-key="." aria-label="Запятая">,</button>
+        <button type="button" class="calc__eq" data-key="=" aria-label="Равно">=</button>
+      </div>
+      <div class="calc__past" id="calc-past" hidden>
+        <div class="calc__past-head">
+          <span>История</span>
+          <button type="button" class="calc__clear" id="calc-clear" title="Очистить историю вычислений">Очистить</button>
+        </div>
+        <ol class="calc__history" id="calc-history" aria-label="Последние вычисления"></ol>
+      </div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap">
+      <p>Курсы — Банк России. Новости — открытые источники, ссылка на оригинал у каждой новости.</p>
+      <p>Финансы без сахара · итоговый проект практического курса по вайб-кодингу на Claude Code от Zerocoder</p>
+    </div>
+  </footer>
+
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.js"></script>
+  <!-- Порядок важен: сначала общие функции, у каждого раздела — данные, потом логика.
+       Курсы — до калькулятора и суда, «Юмор» (окошко для картинок) — до «Дня в истории» и суда -->
+  <script src="js/utils.js"></script>
+  <script src="js/title.js"></script>
+  <script src="data/deadlines.js"></script>
+  <script src="js/deadlines.js"></script>
+  <script src="data/rates.js"></script>
+  <script src="js/rates.js"></script>
+  <script src="data/news.js"></script>
+  <script src="data/archive.js"></script>
+  <script src="js/news.js"></script>
+  <script src="data/humor.js"></script>
+  <script src="js/humor.js"></script>
+  <script src="data/events.js"></script>
+  <script src="data/events-daily.js"></script>
+  <script src="js/events.js"></script>
+  <script src="js/calc.js"></script>
+  <script src="data/court.js"></script>
+  <script src="data/court-live.js"></script>
+  <script src="data/court-more.js"></script>
+  <script src="data/court-kinds.js"></script>
+  <script src="data/court-brands.js"></script>
+  <script src="js/court.js?v=20261104-full-reset"></script>
+  <script src="js/court-sound.js"></script>
+</body>
+</html>
